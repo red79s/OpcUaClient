@@ -1,0 +1,245 @@
+﻿<Window x:Class="OpcUaClient.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:opcUaClient="clr-namespace:OpcUaClient"
+        Title="OPC UA Client"
+        Width="826"
+        Height="403"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <Window.Resources>
+        <opcUaClient:TagValueDataTemplateDictionary x:Key="dataTemplateSelectorDictionary">
+            <DataTemplate x:Key="boolTemplate">
+                <Border BorderBrush="DarkGray"
+                        BorderThickness="2"
+                        CornerRadius="3">
+                    <Grid>
+                        <Grid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Command="{Binding Parent.AutoIncrementValue}" Header="Automaticaly toggle value 100 times" />
+                                <MenuItem Command="{Binding Parent.MoveToTopCommand}" Header="Move to top" />
+                            </ContextMenu>
+                        </Grid.ContextMenu>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200" />
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="300" />
+                            <ColumnDefinition Width="150" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="22" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   Margin="5,0,0,0"
+                                   VerticalAlignment="Center"
+                                   Text="{Binding TagName,
+                                                  Mode=OneWay}" />
+                        <TextBlock Grid.Column="1"
+                                   VerticalAlignment="Center"
+                                   Text="{Binding TagDataType,
+                                                  Mode=OneWay}" />
+                        <Button Grid.Column="2"
+                                Background="{Binding Value,
+                                                     Converter={opcUaClient:BoolToColorConverter}}"
+                                Click="BoolValue_OnClick"
+                                Content="{Binding Value,
+                                                  Mode=OneWay}" />
+                        <TextBlock Grid.Column="3"
+                                   Margin="10,0,0,0"
+                                   VerticalAlignment="Center"
+                                   Text="{Binding LastUpdated,
+                                                  Mode=OneWay}" />
+                    </Grid>
+                </Border>
+            </DataTemplate>
+
+            <DataTemplate x:Key="intTemplate">
+                <Border BorderBrush="DarkGray"
+                        BorderThickness="2"
+                        CornerRadius="3">
+                    <Grid>
+                        <Grid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Command="{Binding Path=Parent.SetAutoUpdate}"
+                                          Header="AutoIncrement"
+                                          IsEnabled="{Binding EnableAutoUpdate}" />
+                                <MenuItem Command="{Binding Parent.CancelAutoUpdate}"
+                                          Header="Cancel AutoIncrement"
+                                          IsEnabled="{Binding EnableCancelAutoUpdate}" />
+                                <MenuItem Command="{Binding Parent.SetValueCommand}"
+                                          CommandParameter="0"
+                                          Header="Set Value 0" />
+                                <MenuItem Command="{Binding Parent.SetValueCommand}"
+                                          CommandParameter="1"
+                                          Header="Set Value 1" />
+                                <MenuItem Command="{Binding Parent.SetValueCommand}"
+                                          CommandParameter="50"
+                                          Header="Set Value 50" />
+                                <MenuItem Command="{Binding Parent.SetValueCommand}"
+                                          CommandParameter="100"
+                                          Header="Set Value 100" />
+                                <MenuItem Command="{Binding Parent.SetValueCommand}"
+                                          CommandParameter="500"
+                                          Header="Set Value 500" />
+                                <MenuItem Command="{Binding Parent.SetValueCommand}"
+                                          CommandParameter="5000"
+                                          Header="Set Value 5000" />
+                                <MenuItem Command="{Binding Parent.AutoIncrementValue}" Header="Automaticaly increase value 100 times" />
+                                <MenuItem Command="{Binding Parent.MoveToTopCommand}" Header="Move to top" />
+                            </ContextMenu>
+                        </Grid.ContextMenu>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200" />
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="300" />
+                            <ColumnDefinition Width="150" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="22" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   Margin="5,0,0,0"
+                                   VerticalAlignment="Center"
+                                   Text="{Binding TagName,
+                                                  Mode=OneWay}" />
+                        <TextBlock Grid.Column="1"
+                                   VerticalAlignment="Center"
+                                   Text="{Binding TagDataType,
+                                                  Mode=OneWay}" />
+                        <Grid Grid.Column="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="40" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox HorizontalContentAlignment="Right"
+                                     VerticalContentAlignment="Center"
+                                     Text="{Binding Value}" />
+                            <Button Grid.Column="1"
+                                    Margin="5,0,0,0"
+                                    Click="UpdateValue_OnClick">
+                                Upd
+                            </Button>
+                        </Grid>
+                        <TextBlock Grid.Column="3"
+                                   Margin="10,0,0,0"
+                                   VerticalAlignment="Center"
+                                   Text="{Binding LastUpdated,
+                                                  Mode=OneWay}" />
+                    </Grid>
+                </Border>
+            </DataTemplate>
+
+            <DataTemplate x:Key="defaultTemplate">
+                <Border BorderBrush="DarkGray"
+                        BorderThickness="2"
+                        CornerRadius="3">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200" />
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="300" />
+                            <ColumnDefinition Width="150" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="22" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   Margin="5,0,0,0"
+                                   VerticalAlignment="Center"
+                                   Text="{Binding TagName,
+                                                  Mode=OneWay}" />
+                        <TextBlock Grid.Column="1"
+                                   VerticalAlignment="Center"
+                                   Text="{Binding TagDataType,
+                                                  Mode=OneWay}" />
+                        <Grid Grid.Column="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="40" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox HorizontalContentAlignment="Right"
+                                     VerticalContentAlignment="Center"
+                                     Text="{Binding Value}" />
+                            <Button Grid.Column="1"
+                                    Margin="5,0,0,0"
+                                    Click="UpdateValue_OnClick">
+                                Upd
+                            </Button>
+                        </Grid>
+                        <TextBlock Grid.Column="3"
+                                   Margin="10, 0, 0, 0"
+                                   VerticalAlignment="Center"
+                                   Text="{Binding LastUpdated,
+                                                  Mode=OneWay}" />
+                    </Grid>
+                </Border>
+            </DataTemplate>
+
+        </opcUaClient:TagValueDataTemplateDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="5" />
+            <RowDefinition Height="20" />
+        </Grid.RowDefinitions>
+        <StackPanel Margin="5" Orientation="Horizontal">
+            <Label Margin="10, 0">Url</Label>
+            <ComboBox Name="UrlComboBox"
+                      Width="300"
+                      VerticalContentAlignment="Center"
+                      IsEditable="True" />
+            <Button Name="ConnectButton"
+                    Width="100"
+                    Margin="10, 0, 0, 0"
+                    Click="ConnectButton_Click">
+                Connect
+            </Button>
+            <Button Name="DeleteButton"
+                    Width="50"
+                    Margin="5,0"
+                    Click="DeleteButton_OnClick">
+                Del
+            </Button>
+
+            <Button Name="ClearLogButton"
+                    Width="80"
+                    Margin="20, 0, 0, 0"
+                    Click="ClearLogButton_OnClick">
+                Clear Log
+            </Button>
+            <Button Name="PauseLogButton"
+                    Width="80"
+                    Margin="5, 0, 0, 0"
+                    Click="PauseLogButton_OnClick">
+                Pause Log
+            </Button>
+        </StackPanel>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="12"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <TreeView Name="AliasGroupsTreeView"
+                      Grid.Column="0"
+                      SelectedItemChanged="AliasGroupsTreeView_OnSelectedItemChanged" />
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
+            <ListView x:Name="TagsListView"
+                      Grid.Column="2"
+                      ItemsSource="{Binding SelectedTags}"
+                      SelectedItem="{Binding SelectedTagItem}">
+
+                <ListView.ItemTemplateSelector>
+                    <opcUaClient:TagValueTemplateSelectorExt TemplateDictionary="{StaticResource ResourceKey=dataTemplateSelectorDictionary}" Property="Value" />
+                </ListView.ItemTemplateSelector>
+            </ListView>
+        </Grid>
+        <GridSplitter Grid.Row="2"
+                      Height="5"
+                      HorizontalAlignment="Stretch" />
+        <ScrollViewer Name="OutputScrollViewer" Grid.Row="3">
+            <TextBox Name="OutputTextBox" />
+        </ScrollViewer>
+    </Grid>
+</Window>
